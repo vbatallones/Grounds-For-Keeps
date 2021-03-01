@@ -24,7 +24,7 @@ app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
 app.get('/', (req, res) => {
@@ -41,7 +41,7 @@ app.get('/campgrounds/new', (req, res) => {
     res.render('campgrounds/new')
 })
 
-app.post('/campgrounds', async(req, res) => {
+app.post('/campgrounds', async (req, res) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`)
@@ -56,21 +56,21 @@ app.get('/campgrounds/:id', async (req, res) => {
 
 
 // render the edit form
-app.get('/campgrounds/:id/edit', async(req, res) => {
+app.get('/campgrounds/:id/edit', async (req, res) => {
     const { id } = req.params;
-    const campgrounds = await Campground.findById(id)
-    res.render('campgrounds/edit', { campgrounds })
+    const campground = await Campground.findById(id)
+    res.render('campgrounds/edit', { campground })
 })
 
 // update the campground
 app.put('/campgrounds/:id', async (req, res) => {
     const { id } = req.params;
-    const campgrounds = await Campground.findByIdAndUpdate(id, {...req.body.campground}, { runValidators: true, new: true });
+    const campgrounds = await Campground.findByIdAndUpdate(id, { ...req.body.campground }, { runValidators: true, new: true });
     res.redirect(`/campgrounds/${campgrounds._id}`)
 })
 
-app.delete('/campgrounds/:id', async(req,res) => {
-    const {id} = req.params;
+app.delete('/campgrounds/:id', async (req, res) => {
+    const { id } = req.params;
     const campgrounds = await Campground.findByIdAndDelete(id)
     res.redirect('/campgrounds')
 })
