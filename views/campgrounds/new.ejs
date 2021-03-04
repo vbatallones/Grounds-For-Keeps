@@ -2,30 +2,62 @@
 
     <h1 class="text-center">New Campground</h1>
     <div class="col-6 offset-3">
-        <form action="/campgrounds" method="POST">
+        <form action="/campgrounds" method="POST" novalidate class="validationForm">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control" id="title" name="campground[title]">
+                <input type="text" class="form-control" id="title" name="campground[title]" required>
+                <div class="valid-feedback">
+                    Camp ground ready!
+                </div>
+                <div class="invalid-feedback">
+                    Please provide a Name
+                </div>
             </div>
             <div class="mb-3">
                 <label for="location" class="form-label">Location</label>
-                <input type="text" class="form-control" id="location" name="campground[location]">
+                <input type="text" class="form-control" id="location" name="campground[location]" required>
+                <div class="valid-feedback">
+                    Camp ground ready!
+                </div>
+                <div class="invalid-feedback">
+                    Please provide a Valid Location
+                </div>
             </div>
             <div class="mb-3">
                 <label for="price" class="form-label">Price</label>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="price-label">$</span>
                     <input type="text" class="form-control" placeholder="0.00" aria-label="price"
-                        aria-describedby="price-label" name="campground[price]">
+                        aria-describedby="price-label" name="campground[price]" required>
+                    <div class="valid-feedback">
+                        Camp ground ready!
+                    </div>
+                    <div class="invalid-feedback">
+                        Please provide a Price
+                    </div>
                 </div>
+
             </div>
             <div class="mb-3">
                 <label for="image" class="form-label">Image URL </label>
-                <input type="text" class="form-control" id="image" name="campground[image]">
+                <input type="text" class="form-control" id="image" name="campground[image]" required>
+                <div class="valid-feedback">
+                    Camp ground ready!
+                </div>
+                <div class="invalid-feedback">
+                    Please provide a Image URL
+                </div>
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea type="text" class="form-control" id="description" name="campground[description]"></textarea>
+                <textarea type="text" class="form-control" id="description" name="campground[description]"
+                    required></textarea>
+                <div class="valid-feedback">
+                    Camp ground ready!
+                </div>
+                <div class="invalid-feedback">
+                    Please provide a Description
+                </div>
             </div>
 
             <button type="submit" class="btn btn-success mb-3">Add Campground</button>
