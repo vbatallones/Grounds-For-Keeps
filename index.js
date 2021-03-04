@@ -10,7 +10,8 @@ const Campground = require('./models/campground')
 mongoose.connect('mongodb://localhost:27017/ground-for-keeps', {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
 })
 
 const db = mongoose.connection;
@@ -37,10 +38,12 @@ app.get('/campgrounds', async (req, res) => {
     res.render('campgrounds/index', { campgrounds })
 })
 
+// render the new campground form
 app.get('/campgrounds/new', (req, res) => {
     res.render('campgrounds/new')
 })
 
+// route to create a new campground
 app.post('/campgrounds', async (req, res) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
@@ -69,10 +72,16 @@ app.put('/campgrounds/:id', async (req, res) => {
     res.redirect(`/campgrounds/${campgrounds._id}`)
 })
 
+// delete the campground
 app.delete('/campgrounds/:id', async (req, res) => {
     const { id } = req.params;
     const campgrounds = await Campground.findByIdAndDelete(id)
     res.redirect('/campgrounds')
+})
+
+app.use((err, req, res, next) => {
+    const {status = 500, message = "Something went wrong"} = err;
+    res.status(status).send(message);
 })
 
 app.listen(3000, () => {
