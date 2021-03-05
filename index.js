@@ -3,7 +3,7 @@ const app = express();
 const path = require('path');
 const ejsMate = require('ejs-mate')
 const methodOverride = require('method-override')
-
+const { campgroundSchema } = require('./schemaJoi.js')
 // Error handling
 const catchAsync = require('./error/catchAsync')
 const ErrorHandling = require('./error/ErrorHandling');
@@ -32,6 +32,15 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
+const validateForm = (req, res, next) => {
+    const { error } = campgroundSchema.validate(req.body)
+    const msg = error.details.map(el => el.message).join(',');
+    if (error) {
+        throw new ErrorHandling(msg, 400)
+    } else {
+        next();
+    }
+}
 app.get('/', (req, res) => {
     res.render('home')
 })
@@ -48,8 +57,8 @@ app.get('/campgrounds/new', catchAsync(async (req, res) => {
 }))
 
 // route to create a new campground
-app.post('/campgrounds', catchAsync(async (req, res, next) => {
-    if (!req.body.campground) throw new ErrorHandling('Invalid Data', 400);
+app.post('/campgrounds', validateForm, catchAsync(async (req, res, next) => {
+
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`)
@@ -71,7 +80,7 @@ app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
 }))
 
 // update the campground
-app.put('/campgrounds/:id', catchAsync(async (req, res) => {
+app.put('/campgrounds/:id', validateForm, catchAsync(async (req, res) => {
     const { id } = req.params;
     const campgrounds = await Campground.findByIdAndUpdate(id, { ...req.body.campground }, { runValidators: true, new: true });
     res.redirect(`/campgrounds/${campgrounds._id}`)
