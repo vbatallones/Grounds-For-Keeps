@@ -16,6 +16,7 @@
     <%- include('../partials/navbar') %>
 
         <main class="container mt-5">
+            <%- include('../partials/flash') %> 
             <%- body %>
         </main>
 
@@ -24,25 +25,7 @@
                 integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
                 crossorigin="anonymous"></script>
                 
-            <script>
-                (function () {
-                    'use strict'
-                    const forms = document.querySelectorAll('.validationForm')
-
-                    // Loop over them and prevent submission
-                    Array.from(forms)
-                        .forEach(function (form) {
-                            form.addEventListener('submit', function (event) {
-                                if (!form.checkValidity()) {
-                                    event.preventDefault()
-                                    event.stopPropagation()
-                                }
-
-                                form.classList.add('was-validated')
-                            }, false)
-                        })
-                })()
-            </script>
+                <script src="/JS/validateForms.js"></script>
 </body>
 
 </html>
