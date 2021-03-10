@@ -5,9 +5,12 @@ const ejsMate = require('ejs-mate');
 const session = require('express-session');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
+const passport = require('passport');
+const passportLocal = require('passport-local')
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
-
+const userRoutes = require('./routes/users')
+const User = require('./models/user')
 
 // Error handling
 const ErrorHandling = require('./error/ErrorHandling');
@@ -39,25 +42,37 @@ const sessionConfig = {
     secret: 'thisshouldbeabettersecret',
     resave: false,
     saveUninitialized: true,
-    cookie:{
+    cookie: {
         httpOnly: true,
         // user session expiration date
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-        maxAge:  1000 * 60 * 60 * 24 * 7
+        maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }
 app.use(session(sessionConfig));
 app.use(flash());
 
+// make sure that session is use before initializing passport 
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new passportLocal(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
-    res.locals.error = req.flash('error')
+    res.locals.error = req.flash('error');
     next();
 })
 
 // Route handler
 app.use('/campgrounds', campgroundRoutes);
 app.use('/campgrounds/:id/reviews', reviewRoutes);
+app.use('/', userRoutes);
+
+
 
 
 app.get('/', (req, res) => {
