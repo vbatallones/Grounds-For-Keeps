@@ -3,6 +3,7 @@ const router = express.Router();
 const catchAsync = require('../error/catchAsync');
 const ErrorHandling = require('../error/ErrorHandling');
 const { campgroundSchema } = require('../schemaJoi.js');
+const {isLoggedIn} = require('../middleware')
 
 
 // MODELS
@@ -26,12 +27,12 @@ router.get('/', catchAsync(async (req, res) => {
 }))
 
 // render the new campground form
-router.get('/new', catchAsync(async (req, res) => {
+router.get('/new', isLoggedIn, catchAsync(async (req, res) => {
     res.render('campgrounds/new')
 }))
 
 // route to create a new campground
-router.post('/', validateForm, catchAsync(async (req, res, next) => {
+router.post('/', isLoggedIn, validateForm, catchAsync(async (req, res, next) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
     req.flash('success', 'Successfully made a new campground!')
@@ -51,7 +52,7 @@ router.get('/:id', catchAsync(async (req, res) => {
 
 
 // render the edit form
-router.get('/:id/edit', catchAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id)
     if (!campground) {
@@ -62,7 +63,7 @@ router.get('/:id/edit', catchAsync(async (req, res) => {
 }))
 
 // update the campground
-router.put('/:id', validateForm, catchAsync(async (req, res) => {
+router.put('/:id', isLoggedIn, validateForm, catchAsync(async (req, res) => {
     const { id } = req.params;
     const campgrounds = await Campground.findByIdAndUpdate(id, { ...req.body.campground }, { runValidators: true, new: true });
     req.flash('success', 'Updated Campground');
@@ -70,11 +71,12 @@ router.put('/:id', validateForm, catchAsync(async (req, res) => {
 }))
 
 // delete the campground
-router.delete('/:id', catchAsync(async (req, res) => {
+router.delete('/:id', isLoggedIn, catchAsync(async (req, res) => {
     const { id } = req.params;
     const campgrounds = await Campground.findByIdAndDelete(id);
     req.flash('success', 'Deleted Campground');
     res.redirect('/campgrounds');
 }))
+
 
 module.exports = router;
