@@ -4,12 +4,17 @@ const Schema = mongoose.Schema;
 
 const CampgroundSchema = new Schema({
     title: String,
-    image: String,
+    images: [
+        {
+            url: String,
+            fileName: String,
+        }
+    ],
     price: Number,
     description: String,
     location: String,
     owner: {
-        type:Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User'
     },
     reviews: [{
@@ -18,7 +23,7 @@ const CampgroundSchema = new Schema({
     }]
 });
 
-CampgroundSchema.post('findOneAndDelete', async function(data) {
+CampgroundSchema.post('findOneAndDelete', async function (data) {
     if (data) {
         await Review.deleteMany({
             _id: {
